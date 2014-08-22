@@ -13,5 +13,7 @@ ADD . /app
 WORKDIR /app
 
 EXPOSE 1936
+EXPOSE 80
+EXPOSE 443
 
 CMD ["python", "main.py"]
