@@ -38,11 +38,15 @@ listen stats :1936
 
 frontend http-in
     bind *:80
-    acl master_host hdr(host) -i master.backend.teamwire.eu
-    use_backend backend-master if master_host
+{% for service in services %}
+    {% if service.startswith('backend-') -%}
+    acl is_for_{{service}} hdr(host) -i {{ service | replace("backend-","") | replace("-prod","") }}.backend.teamwire.eu
+    use_backend {{service}} if is_for_{{service}}
+    {%- endif -%}
+{%- endfor %}
 {% if 'backend-public-prod' in services -%}
     default_backend backend-public-prod
-{% endif %}
+{%- endif %}
 
 {% for service in services -%}
     {% if service.startswith('backend-') -%}
